@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: sosmed
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: juliojnicolas1@gmail.com
+    password: fyyt ezja fwfs phuh
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            required: true
+            enable: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1.0
+
+rsa:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
+
+#logging:
+#  level:
+#    root: DEBUG
+
