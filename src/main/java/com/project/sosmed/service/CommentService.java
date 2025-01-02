@@ -14,4 +14,6 @@ public interface CommentService {
     Page<PostCommentsResponse> getCommentsFromPost(String postId, int page, int size);
 
     List<CommentRepliesResponse> getCommentReplies(String parentCommentId);
+
+    void deleteComment(String commentId);
 }

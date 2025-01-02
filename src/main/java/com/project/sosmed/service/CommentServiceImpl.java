@@ -57,9 +57,7 @@ public class CommentServiceImpl implements CommentService {
             Comment parentComment = commentRepository.findById(parentCommentUUID)
                     .orElseThrow(() -> new ResourceNotFoundException("Cannot reply to a non-existing comment"));
 
-            createComment = Comment.builder()
-                    .parentComment(parentComment)
-                    .build();
+            createComment.setParentComment(parentComment);
         }
 
         Comment createdComment = commentRepository.save(createComment);
@@ -99,5 +97,16 @@ public class CommentServiceImpl implements CommentService {
         }
 
         return commentRepository.findByParentCommentId(parentCommentUUID);
+    }
+
+    @Override
+    public void deleteComment(String commentId) {
+        UUID commentUUID = UUID.fromString(commentId);
+
+        if (!commentRepository.existsById(commentUUID)) {
+            throw new ResourceNotFoundException("Comment does not exist in the database!");
+        }
+
+        commentRepository.deleteById(commentUUID);
     }
 }

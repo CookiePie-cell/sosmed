@@ -68,4 +68,13 @@ public class CommentController {
                 .message("Sucess")
                 .build());
     }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<WebResponse<?>> deleteComment(@PathVariable String commentId) {
+        commentService.deleteComment(commentId);
+        return ResponseEntity.ok(WebResponse.<String>builder()
+                .status(HttpStatus.OK.value())
+                .message("Success")
+                .build());
+    }
 }

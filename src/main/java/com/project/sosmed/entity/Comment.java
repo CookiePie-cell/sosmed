@@ -13,7 +13,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@SQLDelete(sql = "UPDATE comments SET deleted_date = now() WHERE id = ?")
 @Table(name = "comments")
 public class Comment extends BaseEntity {
     @Id
