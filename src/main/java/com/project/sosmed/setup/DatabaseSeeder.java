@@ -1,34 +1,39 @@
 package com.project.sosmed.setup;
 
-import com.project.sosmed.entity.Role;
-import com.project.sosmed.entity.RoleName;
-import com.project.sosmed.entity.User;
-import com.project.sosmed.repository.RoleRepository;
-import com.project.sosmed.repository.UserRepository;
+import com.project.sosmed.entity.*;
+import com.project.sosmed.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Component
 @AllArgsConstructor
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final UserRepository userRepository;
-
     private final RoleRepository roleRepository;
-
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final FollowRepository followRepository;
+    private final LikeRepository likeRepository;
+    private final VerificationTokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
-    public void run(String... args) throws Exception {
-        initializeRoles();
-
-        initializeUsers();
+    public void run(String... args) {
+//        initializeRoles();
+//        initializeUsers();
+//        initializePosts();
+//        initializeComments();
+//        initializeFollows();
+//        initializeLikes();
+//        initializeVerificationTokens();
     }
 
     private void initializeRoles() {
@@ -46,44 +51,110 @@ public class DatabaseSeeder implements CommandLineRunner {
     }
 
     private void initializeUsers() {
-        // Check if the user exists by username or email
         if (!userRepository.existsByEmail("admin@example.com")) {
-            // Fetch the admin role from the repository
             Role adminRole = roleRepository.findByName(RoleName.ADMIN)
                     .orElseThrow(() -> new RuntimeException("Admin role not found"));
 
-            // Create a new admin user
             User adminUser = new User();
             adminUser.setUsername("admin");
-            adminUser.setPassword(passwordEncoder.encode("password1")); // You should encode the password before saving
+            adminUser.setPassword(passwordEncoder.encode("password1"));
             adminUser.setEmail("admin@example.com");
             adminUser.setEnabled(true);
-            // Assign the admin role to the user
             adminUser.getRoles().add(adminRole);
 
-
-            // Save the user to the database
             userRepository.save(adminUser);
-
-            User user = userRepository.findByEmail("admin@example.com")
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + "admin@example.com"));
-
-//            System.out.println("Authoritessss from DatabaseSeeder: " + "admin@example.com" + " - " + user.getRoles());
         }
 
-        if (!userRepository.existsByEmail("user@example.com")) {
+        if (!userRepository.existsByEmail("user1@example.com")) {
             Role userRole = roleRepository.findByName(RoleName.USER)
                     .orElseThrow(() -> new RuntimeException("User role not found"));
 
-            User regularUser = new User();
-            regularUser.setUsername("user");
-            regularUser.setPassword(passwordEncoder.encode("password1")); // Encode the password
-            regularUser.setEmail("user@example.com");
-            regularUser.setEnabled(true);
-            regularUser.getRoles().add(userRole);
+            for (int i = 1; i <= 5; i++) {
+                User user = new User();
+                user.setUsername("user" + i);
+                user.setPassword(passwordEncoder.encode("password" + i));
+                user.setEmail("user" + i + "@example.com");
+                user.setEnabled(true);
+                user.getRoles().add(userRole);
 
-            userRepository.save(regularUser);
+                userRepository.save(user);
+            }
         }
     }
-}
 
+    private void initializePosts() {
+        userRepository.findAll().forEach(user -> {
+            for (int i = 1; i <= 2; i++) {
+                Post post = new Post();
+                post.setId(UUID.randomUUID());
+                post.setCreatedDate(LocalDateTime.now());
+                post.setBody("Post " + i + " by " + user.getUsername());
+                post.setUser(user);
+
+                postRepository.save(post);
+            }
+        });
+    }
+
+    private void initializeComments() {
+        postRepository.findAll().forEach(post -> {
+            User commenter = userRepository.findById(post.getUser().getId()).orElse(null);
+            if (commenter != null) {
+                Comment comment = new Comment();
+                comment.setId(UUID.randomUUID());
+                comment.setCreatedDate(LocalDateTime.now());
+                comment.setContent("Comment on " + post.getBody());
+                comment.setPost(post);
+                comment.setUser(commenter);
+
+                commentRepository.save(comment);
+            }
+        });
+    }
+
+    private void initializeFollows() {
+        userRepository.findAll().forEach(user -> {
+            userRepository.findAll().stream()
+                    .filter(otherUser -> !otherUser.equals(user))
+                    .limit(2)
+                    .forEach(followedUser -> {
+                        Follow follow = new Follow();
+                        follow.setId(UUID.randomUUID());
+                        follow.setCreatedDate(LocalDateTime.now());
+                        follow.setFollowingUser(user);
+                        follow.setFollowedUser(followedUser);
+
+                        followRepository.save(follow);
+                    });
+        });
+    }
+
+    private void initializeLikes() {
+        postRepository.findAll().forEach(post -> {
+            userRepository.findAll().stream()
+                    .filter(user -> !user.equals(post.getUser()))
+                    .limit(2)
+                    .forEach(liker -> {
+                        Like like = new Like();
+                        like.setId(UUID.randomUUID());
+                        like.setCreatedDate(LocalDateTime.now());
+                        like.setPost(post);
+                        like.setUser(liker);
+
+                        likeRepository.save(like);
+                    });
+        });
+    }
+
+    private void initializeVerificationTokens() {
+        userRepository.findAll().forEach(user -> {
+            VerificationToken token = new VerificationToken();
+            token.setId(UUID.randomUUID());
+            token.setExpiryDate(LocalDateTime.now().plusDays(7));
+            token.setToken(UUID.randomUUID().toString());
+            token.setUser(user);
+
+            tokenRepository.save(token);
+        });
+    }
+}

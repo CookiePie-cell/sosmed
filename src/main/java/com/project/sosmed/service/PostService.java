@@ -16,8 +16,4 @@ public interface PostService {
     Page<PostResponse> getAllPostsWithTotalLikesAndComments(String userId, int page, int size);
 
     Page<PostResponse> getFollowedUserPostsWithTotalLikesAndComments(String userId, int page, int size);
-
-    Page<PostCommentsResponse> getCommentsFromPost(String postId, int page, int size);
-
-    List<CommentRepliesResponse> getCommentReplies(String parentCommentId);
 }

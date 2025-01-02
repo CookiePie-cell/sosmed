@@ -134,29 +134,4 @@ public class PostServiceImpl implements PostService {
         return posts;
     }
 
-    @Override
-    public Page<PostCommentsResponse> getCommentsFromPost(String postId, int page, int size) {
-        UUID postUUID = UUID.fromString(postId);
-
-        if (!postRepository.existsById(postUUID)) {
-            throw new ResourceNotFoundException("Post not found");
-        }
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-
-        return commentRepository.findByPostId(postUUID, pageable);
-    }
-
-    @Override
-    public List<CommentRepliesResponse> getCommentReplies(String parentCommentId) {
-        UUID parentCommentUUID = UUID.fromString(parentCommentId);
-
-        if (!commentRepository.existsById(parentCommentUUID)) {
-            throw new ResourceNotFoundException("Parent comment not found");
-        }
-
-        return commentRepository.findByParentCommentId(parentCommentUUID);
-    }
-
-
 }

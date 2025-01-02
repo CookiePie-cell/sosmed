@@ -80,6 +80,11 @@ public class PostController {
         return ResponseEntity.ok(WebResponse.<List<PostResponse>>builder()
                         .data(posts.getContent())
                         .status(HttpStatus.OK.value())
+                        .paging(PagingResponse.builder()
+                                .currentPage(posts.getNumber())
+                                .totalPage(posts.getTotalPages())
+                                .size(posts.getSize())
+                                .build())
                         .message("Success")
                 .build());
     }
@@ -98,40 +103,12 @@ public class PostController {
         return ResponseEntity.ok(WebResponse.<List<PostResponse>>builder()
                         .data(posts.getContent())
                         .status(HttpStatus.OK.value())
-                        .message("Success")
-                .build());
-    }
-
-    @GetMapping("/comments/{postId}")
-    public ResponseEntity<WebResponse<List<PostCommentsResponse>>> getCommentsFromPost(
-            @PathVariable("postId") String postId,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "5") int size
-    ) {
-        Page<PostCommentsResponse> comments = postService.getCommentsFromPost(postId, page, size);
-
-        return ResponseEntity.ok(WebResponse.<List<PostCommentsResponse>>builder()
-                        .data(comments.getContent())
-                        .status(HttpStatus.OK.value())
-                        .message("Success")
                         .paging(PagingResponse.builder()
-                                .currentPage(comments.getNumber())
-                                .totalPage(comments.getTotalPages())
-                                .size(comments.getSize())
+                                .currentPage(posts.getNumber())
+                                .totalPage(posts.getTotalPages())
+                                .size(posts.getSize())
                                 .build())
-                .build());
-    }
-
-    @GetMapping("/comments/replies/{parentCommentId}")
-    public ResponseEntity<WebResponse<List<CommentRepliesResponse>>> getCommentReplies(
-            @PathVariable("parentCommentId") String id
-    ) {
-        List<CommentRepliesResponse> replies = postService.getCommentReplies(id);
-
-        return ResponseEntity.ok(WebResponse.<List<CommentRepliesResponse>>builder()
-                        .data(replies)
-                        .status(HttpStatus.OK.value())
-                        .message("Sucess")
+                        .message("Success")
                 .build());
     }
 }

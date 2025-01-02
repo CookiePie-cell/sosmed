@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -16,13 +18,13 @@ public class BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date", nullable = false, updatable = false)
     @CreationTimestamp
-    private Date createdDate;
+    private LocalDateTime createdDate;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_date")
     @UpdateTimestamp
-    private Date updatedDate;
+    private LocalDateTime updatedDate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date deletedDate;
+    private LocalDateTime deletedDate;
 }
