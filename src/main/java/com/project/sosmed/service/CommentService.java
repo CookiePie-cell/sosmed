@@ -15,5 +15,5 @@ public interface CommentService {
 
     List<CommentRepliesResponse> getCommentReplies(String parentCommentId);
 
-    void deleteComment(String commentId);
+    void deleteComment(String commentId, String userId);
 }

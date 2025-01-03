@@ -70,8 +70,11 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<WebResponse<?>> deleteComment(@PathVariable String commentId) {
-        commentService.deleteComment(commentId);
+    public ResponseEntity<WebResponse<?>> deleteComment(
+            Authentication authentication,
+            @PathVariable String commentId
+    ) {
+        commentService.deleteComment(commentId, authentication.getName());
         return ResponseEntity.ok(WebResponse.<String>builder()
                 .status(HttpStatus.OK.value())
                 .message("Success")

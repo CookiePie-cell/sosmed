@@ -100,13 +100,17 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment(String commentId) {
+    public void deleteComment(String commentId, String userId) {
         UUID commentUUID = UUID.fromString(commentId);
+        Comment comment = commentRepository.findById(commentUUID)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment does not exist!"));
 
-        if (!commentRepository.existsById(commentUUID)) {
-            throw new ResourceNotFoundException("Comment does not exist in the database!");
+        UUID currUserId = UUID.fromString(userId);
+        UUID commenterId = comment.getUser().getId();
+        if (!commenterId.equals(currUserId)) {
+            throw new BadRequestException("Cannot delete other user's comment");
         }
 
-        commentRepository.deleteById(commentUUID);
+        commentRepository.delete(comment);
     }
 }
