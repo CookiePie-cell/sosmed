@@ -16,4 +16,6 @@ public interface PostService {
     Page<PostResponse> getAllPostsWithTotalLikesAndComments(String userId, int page, int size);
 
     Page<PostResponse> getFollowedUserPostsWithTotalLikesAndComments(String userId, int page, int size);
+
+    void deletePost(String postId, String userId);
 }

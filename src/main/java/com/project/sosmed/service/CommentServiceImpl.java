@@ -10,6 +10,7 @@ import com.project.sosmed.model.comment.CreateCommentResponse;
 import com.project.sosmed.model.post.CommentRepliesResponse;
 import com.project.sosmed.model.post.PostCommentsResponse;
 import com.project.sosmed.repository.CommentRepository;
+import com.project.sosmed.repository.LikeRepository;
 import com.project.sosmed.repository.PostRepository;
 import com.project.sosmed.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +31,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final LikeRepository likeRepository;
 
     @Override
     public CreateCommentResponse createComment(CreateCommentRequest request) {
@@ -99,6 +103,7 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.findByParentCommentId(parentCommentUUID);
     }
 
+    @Transactional
     @Override
     public void deleteComment(String commentId, String userId) {
         UUID commentUUID = UUID.fromString(commentId);
@@ -111,6 +116,41 @@ public class CommentServiceImpl implements CommentService {
             throw new BadRequestException("Cannot delete other user's comment");
         }
 
+        // 1. Delete all likes from replies
+        for(Comment reply : comment.getReplies()) {
+            deleteLikesFromReplies(reply);
+        }
+
+        // 2. Delete all likes on the comment
+        likeRepository.deleteAllByCommentId(comment.getId());
+        comment.getLikes().clear();
+
+        // 3. Delete all replies recursively
+        for(Comment reply : comment.getReplies()) {
+            deleteAllRepliesRecursively(reply);
+        }
+        comment.getReplies().clear();
+
         commentRepository.delete(comment);
     }
+
+    private void deleteLikesFromReplies(Comment reply) {
+        for(Comment r : new ArrayList<>(reply.getReplies())) {
+            deleteLikesFromReplies(r);
+        }
+        likeRepository.deleteAllByCommentId(reply.getId());
+        reply.getLikes().clear();
+    }
+
+    private void deleteAllRepliesRecursively(Comment reply) {
+        for(Comment r : new ArrayList<>(reply.getReplies())) {
+            deleteAllRepliesRecursively(r);
+        }
+
+        reply.setPost(null);
+        reply.setParentComment(null);
+        reply.getReplies().clear();
+        commentRepository.delete(reply);
+    }
+
 }

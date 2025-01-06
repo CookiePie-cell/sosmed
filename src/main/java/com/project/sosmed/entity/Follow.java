@@ -6,8 +6,9 @@ import org.hibernate.annotations.SQLDelete;
 
 import java.util.UUID;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+//@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,11 +20,11 @@ public class Follow extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "following_user_id", referencedColumnName = "id")
     private User followingUser;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "followed_user_id", referencedColumnName = "id")
     private User followedUser;
 }

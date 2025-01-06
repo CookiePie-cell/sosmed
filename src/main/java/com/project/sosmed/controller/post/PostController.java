@@ -111,4 +111,17 @@ public class PostController {
                         .message("Success")
                 .build());
     }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<WebResponse<?>> deletePost(
+            Authentication authentication,
+            @PathVariable String postId
+    ) {
+        String userId = authentication.getName();
+        postService.deletePost(postId, userId);
+        return ResponseEntity.ok(WebResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Success")
+                .build());
+    }
 }

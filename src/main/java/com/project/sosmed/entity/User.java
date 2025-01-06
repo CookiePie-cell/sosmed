@@ -6,8 +6,9 @@ import org.hibernate.annotations.SQLDelete;
 
 import java.util.*;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+//@EqualsAndHashCode(callSuper = true, exclude = "verificationToken")
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -46,7 +47,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private Set<Like> likes;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private VerificationToken verificationToken;
 
     @ManyToMany

@@ -75,7 +75,7 @@ public class CommentController {
             @PathVariable String commentId
     ) {
         commentService.deleteComment(commentId, authentication.getName());
-        return ResponseEntity.ok(WebResponse.<String>builder()
+        return ResponseEntity.ok(WebResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("Success")
                 .build());

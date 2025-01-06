@@ -13,6 +13,14 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        jdbc:
+          batch_size: 50        # Enables batch processing of SQL statements
+          order_updates: true     # Orders UPDATE operations for more efficient processing
+          order_inserts: true     # Orders INSERT operations for more efficient processing
+          batch_versioned_data: true  # Allows batching even for versioned entities
+          event:
+            merge:
+              entity_copy_observer: allow  # Helps prevent issues with entity merging
   mail:
     host: smtp.gmail.com
     port: 587

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "user")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -24,7 +24,7 @@ public class VerificationToken {
     @JoinColumn(nullable = false)
     private LocalDateTime expiryDate;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
