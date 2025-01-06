@@ -1,10 +1,13 @@
 package com.project.sosmed.service;
 
 import com.project.sosmed.entity.Comment;
+import com.project.sosmed.entity.Like;
 import com.project.sosmed.entity.Post;
 import com.project.sosmed.entity.User;
 import com.project.sosmed.exception.BadRequestException;
 import com.project.sosmed.exception.ResourceNotFoundException;
+import com.project.sosmed.model.comment.CommentLikeRequest;
+import com.project.sosmed.model.comment.CommentLikeResponse;
 import com.project.sosmed.model.comment.CreateCommentRequest;
 import com.project.sosmed.model.comment.CreateCommentResponse;
 import com.project.sosmed.model.post.CommentRepliesResponse;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -101,6 +105,35 @@ public class CommentServiceImpl implements CommentService {
         }
 
         return commentRepository.findByParentCommentId(parentCommentUUID);
+    }
+
+    @Override
+    public CommentLikeResponse LikeComment(CommentLikeRequest request) {
+        UUID userId = UUID.fromString(request.getUserId());
+        UUID postId = UUID.fromString(request.getCommentId());
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Comment comment = commentRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
+
+        Optional<Like> like = likeRepository.findByUserAndComment(user, comment);
+
+        if (like.isPresent()) {
+            likeRepository.delete(like.get());
+            return CommentLikeResponse.builder().message("Comment unliked").build();
+        }
+
+        Like createLike = Like.builder()
+                .user(user)
+                .comment(comment)
+                .build();
+
+        likeRepository.save(createLike);
+
+        return CommentLikeResponse.builder().message("Comment liked").build();
+
     }
 
     @Transactional

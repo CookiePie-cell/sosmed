@@ -2,12 +2,11 @@ package com.project.sosmed.controller.comment;
 
 import com.project.sosmed.model.PagingResponse;
 import com.project.sosmed.model.WebResponse;
+import com.project.sosmed.model.comment.CommentLikeRequest;
+import com.project.sosmed.model.comment.CommentLikeResponse;
 import com.project.sosmed.model.comment.CreateCommentRequest;
 import com.project.sosmed.model.comment.CreateCommentResponse;
-import com.project.sosmed.model.post.CommentRepliesResponse;
-import com.project.sosmed.model.post.CreatePostRequest;
-import com.project.sosmed.model.post.CreatePostResponse;
-import com.project.sosmed.model.post.PostCommentsResponse;
+import com.project.sosmed.model.post.*;
 import com.project.sosmed.service.CommentService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -66,6 +65,26 @@ public class CommentController {
                 .data(replies)
                 .status(HttpStatus.OK.value())
                 .message("Sucess")
+                .build());
+    }
+
+    @PostMapping("/like/{commentId}")
+    public ResponseEntity<WebResponse<CommentLikeResponse>> likeComment(
+            Authentication authentication,
+            @PathVariable String commentId
+    ) {
+        CommentLikeRequest commentLikeRequest = CommentLikeRequest
+                .builder()
+                .commentId(commentId)
+                .userId(authentication.getName())
+                .build();
+
+
+        return ResponseEntity.ok(WebResponse.<CommentLikeResponse>
+                        builder()
+                .data(commentService.LikeComment(commentLikeRequest))
+                .status(HttpStatus.OK.value())
+                .message("Success")
                 .build());
     }
 
