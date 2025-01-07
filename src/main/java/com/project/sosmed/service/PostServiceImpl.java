@@ -11,9 +11,7 @@ import com.project.sosmed.repository.CommentRepository;
 import com.project.sosmed.repository.LikeRepository;
 import com.project.sosmed.repository.PostRepository;
 import com.project.sosmed.repository.UserRepository;
-import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -156,6 +154,21 @@ public class PostServiceImpl implements PostService {
 
         // 4. Finally delete the post
         postRepository.delete(post);
+    }
+
+    @Override
+    public Page<PostResponse> getLikedPostsByUser(String userId, int page, int size){
+        UUID userIdUUID = UUID.fromString(userId);
+
+        if (!userRepository.existsById(userIdUUID)) {
+            throw new ResourceNotFoundException("User not found");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+
+        Page<PostResponse> posts = postRepository.getLikedPostsByUser(userIdUUID, pageable);
+
+        return getPostResponses(userIdUUID, posts);
     }
 
     private void deleteLikesFromComment(Comment comment) {

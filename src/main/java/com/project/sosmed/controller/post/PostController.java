@@ -112,6 +112,30 @@ public class PostController {
                 .build());
     }
 
+    @GetMapping("/all-liked-posts")
+    public ResponseEntity<WebResponse<List<PostResponse>>> getAllLikedPosts(
+            Authentication authentication,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "5") int size
+    ) {
+        Page<PostResponse> posts = postService.getLikedPostsByUser(
+                authentication.getName(),
+                page,
+                size
+        );
+
+        return ResponseEntity.ok(WebResponse.<List<PostResponse>>builder()
+                .data(posts.getContent())
+                .status(HttpStatus.OK.value())
+                .paging(PagingResponse.builder()
+                        .currentPage(posts.getNumber())
+                        .totalPage(posts.getTotalPages())
+                        .size(posts.getSize())
+                        .build())
+                .message("Success")
+                .build());
+    }
+
     @DeleteMapping("/{postId}")
     public ResponseEntity<WebResponse<?>> deletePost(
             Authentication authentication,
