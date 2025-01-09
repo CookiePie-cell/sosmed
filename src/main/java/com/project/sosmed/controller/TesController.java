@@ -21,6 +21,11 @@ public class TesController {
 
     private final UserRepository userRepository;
 
+    @GetMapping
+    public String test() {
+        return "System running";
+    }
+
     @GetMapping("/hello")
     @PreAuthorize("hasRole('USER')")
     public String sayHello(Authentication authentication) {
