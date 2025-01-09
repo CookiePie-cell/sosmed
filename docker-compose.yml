@@ -19,7 +19,7 @@ services:
     image: postgres:15
     container_name: postgres
     ports:
-      - "5432:5432"  # Map container port 5432 to host port 5432
+      - "5433:5432"  # Redirect traffic from port 5433 from the host machine to port 5432 from the container
     environment:
       POSTGRES_DB: sosmedb
       POSTGRES_USER: developer
