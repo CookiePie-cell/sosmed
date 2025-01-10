@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+      - "5005:5005"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/sosmedb  # Use port 5432 inside the container
       SPRING_DATASOURCE_USERNAME: developer

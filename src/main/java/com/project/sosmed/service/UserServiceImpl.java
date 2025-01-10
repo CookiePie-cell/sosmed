@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void userFollow(FollowRequest request) {
+    public String userFollow(FollowRequest request) {
         UUID followedUserId = UUID.fromString(request.getFollowedUserId());
         UUID followingUserId = UUID.fromString(request.getFollowingUserId());
 
@@ -99,9 +99,12 @@ public class UserServiceImpl implements UserService{
         User followingUser = userRepository.findById(followingUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("Following user does not exist!"));
 
-        Optional<Follow> existingFollow = followRepository.findExistingFollow(followedUserId, followingUserId);
+        Optional<Follow> existingFollow = followRepository.findExistingFollow(followedUser, followingUser);
 
-        existingFollow.ifPresent(follow -> followRepository.delete(follow));
+        if (existingFollow.isPresent()) {
+            followRepository.delete(existingFollow.get());
+            return "User unfollowed";
+        }
 
         Follow follow = Follow.builder()
                 .followedUser(followedUser)
@@ -109,5 +112,6 @@ public class UserServiceImpl implements UserService{
                 .build();
 
         followRepository.save(follow);
+        return "User followed";
     }
 }

@@ -10,5 +10,5 @@ public interface UserService {
 
     void createVerificationToken(User user) throws MessagingException;
 
-    void userFollow(FollowRequest request);
+    String userFollow(FollowRequest request);
 }
