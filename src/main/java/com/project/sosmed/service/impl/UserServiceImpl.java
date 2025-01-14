@@ -1,4 +1,4 @@
-package com.project.sosmed.service;
+package com.project.sosmed.service.impl;
 
 import com.project.sosmed.entity.*;
 import com.project.sosmed.exception.DuplicateResourceException;
@@ -10,6 +10,8 @@ import com.project.sosmed.repository.FollowRepository;
 import com.project.sosmed.repository.RoleRepository;
 import com.project.sosmed.repository.UserRepository;
 import com.project.sosmed.repository.VerificationTokenRepository;
+import com.project.sosmed.service.EmailService;
+import com.project.sosmed.service.UserService;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +25,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
 

@@ -1,7 +1,8 @@
-package com.project.sosmed.service;
+package com.project.sosmed.service.impl;
 
 import com.project.sosmed.model.auth.LoginRequest;
 import com.project.sosmed.model.auth.LoginResponse;
+import com.project.sosmed.service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

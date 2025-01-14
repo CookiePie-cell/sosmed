@@ -1,4 +1,4 @@
-package com.project.sosmed.service;
+package com.project.sosmed.service.impl;
 
 import com.project.sosmed.entity.CustomUserDetails;
 import com.project.sosmed.entity.User;

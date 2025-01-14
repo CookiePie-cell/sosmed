@@ -3,7 +3,7 @@ package com.project.sosmed.controller.auth;
 import com.project.sosmed.model.auth.LoginRequest;
 import com.project.sosmed.model.auth.LoginResponse;
 import com.project.sosmed.service.AuthService;
-import com.project.sosmed.service.TokenService;
+import com.project.sosmed.service.impl.TokenService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

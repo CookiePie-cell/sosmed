@@ -1,4 +1,4 @@
-package com.project.sosmed.service;
+package com.project.sosmed.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;

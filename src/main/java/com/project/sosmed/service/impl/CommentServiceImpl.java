@@ -1,4 +1,4 @@
-package com.project.sosmed.service;
+package com.project.sosmed.service.impl;
 
 import com.project.sosmed.entity.Comment;
 import com.project.sosmed.entity.Like;
@@ -16,6 +16,7 @@ import com.project.sosmed.repository.CommentRepository;
 import com.project.sosmed.repository.LikeRepository;
 import com.project.sosmed.repository.PostRepository;
 import com.project.sosmed.repository.UserRepository;
+import com.project.sosmed.service.CommentService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

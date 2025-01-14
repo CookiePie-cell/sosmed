@@ -1,4 +1,4 @@
-package com.project.sosmed.service;
+package com.project.sosmed.service.impl;
 
 import com.project.sosmed.entity.User;
 import com.project.sosmed.entity.VerificationToken;
@@ -6,6 +6,7 @@ import com.project.sosmed.exception.TokenExpiredException;
 import com.project.sosmed.exception.TokenInvalidException;
 import com.project.sosmed.repository.UserRepository;
 import com.project.sosmed.repository.VerificationTokenRepository;
+import com.project.sosmed.service.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
