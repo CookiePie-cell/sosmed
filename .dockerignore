@@ -1,0 +1,23 @@
+# Ignore build output
+target/
+build/
+
+# Ignore source control files
+.git/
+.gitmodules
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.iml
+
+# Ignore system files (macOS, Windows)
+.DS_Store
+Thumbs.db
+
+# Ignore logs
+*.log
+
+# Ignore temporary files
+*.bak
+*.tmp
