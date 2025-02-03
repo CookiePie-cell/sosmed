@@ -99,6 +99,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<PostResponse> getMyPostsWithTotalLikesAndComments(String userId, int page, int size) {
+        UUID userIdUUID = UUID.fromString(userId);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+
+        Page<PostResponse> posts = postRepository.getMyPostsWithTotalLikesAndComments(userIdUUID, pageable);
+
+        return getPostResponses(userIdUUID, posts);
+    }
+
+    @Override
     public Page<PostResponse> getAllPostsWithTotalLikesAndComments(String userId, int page, int size) {
         UUID userIdUUID = UUID.fromString(userId);
 

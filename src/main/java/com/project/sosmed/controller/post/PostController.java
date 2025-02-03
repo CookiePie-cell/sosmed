@@ -5,6 +5,7 @@ import com.project.sosmed.model.WebResponse;
 import com.project.sosmed.model.post.*;
 import com.project.sosmed.service.PostService;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,6 +67,25 @@ public class PostController {
                 builder()
                         .data(postService.LikePost(postLikeRequest))
                         .status(HttpStatus.OK.value())
+                        .message("Success")
+                .build());
+    }
+
+    @GetMapping("/my-posts")
+    public ResponseEntity<WebResponse<List<PostResponse>>> getMyPostsWithTotalLikesAndComments(
+            Authentication authentication,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "5") int size
+    ) {
+        Page<PostResponse> posts = postService.getMyPostsWithTotalLikesAndComments(authentication.getName(), page, size);
+        return ResponseEntity.ok(WebResponse.<List<PostResponse>>builder()
+                        .data(posts.getContent())
+                        .status(HttpStatus.OK.value())
+                        .paging(PagingResponse.builder()
+                                .currentPage(posts.getNumber())
+                                .totalPage(posts.getTotalPages())
+                                .size(posts.getSize())
+                                .build())
                         .message("Success")
                 .build());
     }

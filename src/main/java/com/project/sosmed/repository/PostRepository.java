@@ -28,6 +28,20 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
             "(SELECT COUNT(c.id) FROM Comment c WHERE c.post = p), " +
             "(SELECT COUNT(l.id) FROM Like l WHERE l.post = p)) " +
             "FROM Post p " +
+            "WHERE p.user.id = :userId " +
+            "ORDER BY p.createdDate DESC")
+    Page<PostResponse> getMyPostsWithTotalLikesAndComments(UUID userId, Pageable pageable);
+
+    @Query("SELECT new com.project.sosmed.model.post.PostResponse(" +
+            "p.id, " +
+            "p.body, " +
+            "p.user.id, " +
+            "p.user.username, " +
+            "p.createdDate, " +
+            "p.updatedDate, " +
+            "(SELECT COUNT(c.id) FROM Comment c WHERE c.post = p), " +
+            "(SELECT COUNT(l.id) FROM Like l WHERE l.post = p)) " +
+            "FROM Post p " +
             "ORDER BY p.createdDate DESC")
     Page<PostResponse> getAllPostsWithTotalLikesAndComments(Pageable pageable);
 

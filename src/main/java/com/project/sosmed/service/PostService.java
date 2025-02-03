@@ -13,6 +13,8 @@ public interface PostService {
 
     PostLikeResponse LikePost(PostLikeRequest request);
 
+    Page<PostResponse> getMyPostsWithTotalLikesAndComments(String userId, int page, int size);
+
     Page<PostResponse> getAllPostsWithTotalLikesAndComments(String userId, int page, int size);
 
     Page<PostResponse> getFollowedUserPostsWithTotalLikesAndComments(String userId, int page, int size);
