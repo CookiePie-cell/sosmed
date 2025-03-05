@@ -1,9 +1,6 @@
 package com.project.sosmed.service.impl;
 
-import com.project.sosmed.entity.Comment;
-import com.project.sosmed.entity.Like;
-import com.project.sosmed.entity.Post;
-import com.project.sosmed.entity.User;
+import com.project.sosmed.entity.*;
 import com.project.sosmed.exception.BadRequestException;
 import com.project.sosmed.exception.ResourceNotFoundException;
 import com.project.sosmed.model.post.*;
@@ -11,6 +8,7 @@ import com.project.sosmed.repository.CommentRepository;
 import com.project.sosmed.repository.LikeRepository;
 import com.project.sosmed.repository.PostRepository;
 import com.project.sosmed.repository.UserRepository;
+import com.project.sosmed.service.FileService;
 import com.project.sosmed.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -34,8 +33,11 @@ public class PostServiceImpl implements PostService {
 
     private LikeRepository likeRepository;
 
+    private FileService fileService;
+
+    @Transactional
     @Override
-    public CreatePostResponse createPost(CreatePostRequest request) {
+    public CreatePostResponse createPost(CreatePostRequest request, List<MultipartFile> media) {
         UUID userId = UUID.fromString(request.getUserId());
 
         User user = userRepository.findById(userId)
@@ -47,6 +49,16 @@ public class PostServiceImpl implements PostService {
                 .build();
 
         Post createdPost = postRepository.save(post);
+
+        if (media != null && !media.isEmpty()) {
+            List<FileMetadata> fileToSave = media.stream().map(m -> {
+                FileMetadata file = fileService.uploadFile(m);
+                file.setPost(post);
+                return file;
+            }).toList();
+
+            fileService.saveAll(fileToSave);
+        }
 
         return CreatePostResponse.builder()
                 .postId(createdPost.getId())

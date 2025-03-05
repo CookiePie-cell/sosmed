@@ -34,6 +34,9 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Like> likes = new HashSet<>();
 
+    @OneToMany(mappedBy = "post")
+    private Set<FileMetadata> fileMetadataSet;
+
     @Override
     public String toString() {
         return "Post{id=" + id + ", content='" + body + "'}";

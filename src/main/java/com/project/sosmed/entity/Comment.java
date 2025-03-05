@@ -41,6 +41,9 @@ public class Comment extends BaseEntity {
     @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Like> likes;
 
+    @OneToMany(mappedBy = "comment")
+    private Set<FileMetadata> fileMetadataSet;
+
     @Override
     public String toString() {
         return "Comment{id=" + id + ", content='" + content + "'}";

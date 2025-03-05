@@ -8,9 +8,11 @@ import lombok.AllArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,20 +23,20 @@ public class PostController {
 
     private PostService postService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<WebResponse<CreatePostResponse>> createPost(
             Authentication authentication,
-            @RequestBody CreatePostRequest request
+            @RequestPart("request") CreatePostRequest request,
+            @RequestPart(value = "media", required = false) List<MultipartFile> media
     ) {
 
         request.setUserId(authentication.getName());
 
         return ResponseEntity.ok(WebResponse.<CreatePostResponse>builder()
-                        .data(postService.createPost(request))
+                        .data(postService.createPost(request, media))
                         .status(HttpStatus.OK.value())
                         .message("Success")
                 .build());
-
     }
 
     @PutMapping("/{postId}")
