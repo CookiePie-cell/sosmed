@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,11 +28,12 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<WebResponse<CreateCommentResponse>> createComment(
             Authentication authentication,
-            @RequestBody CreateCommentRequest request
+            @RequestPart CreateCommentRequest request,
+            @RequestPart(value = "media", required = false) List<MultipartFile> media
     ) {
         request.setUserId(authentication.getName());
         return ResponseEntity.ok(WebResponse.<CreateCommentResponse>builder()
-                .data(commentService.createComment(request))
+                .data(commentService.createComment(request, media))
                 .build());
     }
 

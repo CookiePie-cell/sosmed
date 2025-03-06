@@ -7,11 +7,12 @@ import com.project.sosmed.model.comment.CreateCommentResponse;
 import com.project.sosmed.model.post.CommentRepliesResponse;
 import com.project.sosmed.model.post.PostCommentsResponse;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface CommentService {
-    CreateCommentResponse createComment(CreateCommentRequest request);
+    CreateCommentResponse createComment(CreateCommentRequest request, List<MultipartFile> media);
 
     Page<PostCommentsResponse> getCommentsFromPost(String postId, int page, int size);
 

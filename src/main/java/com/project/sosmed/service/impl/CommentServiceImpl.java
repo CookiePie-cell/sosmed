@@ -1,9 +1,6 @@
 package com.project.sosmed.service.impl;
 
-import com.project.sosmed.entity.Comment;
-import com.project.sosmed.entity.Like;
-import com.project.sosmed.entity.Post;
-import com.project.sosmed.entity.User;
+import com.project.sosmed.entity.*;
 import com.project.sosmed.exception.BadRequestException;
 import com.project.sosmed.exception.ResourceNotFoundException;
 import com.project.sosmed.model.comment.CommentLikeRequest;
@@ -17,6 +14,7 @@ import com.project.sosmed.repository.LikeRepository;
 import com.project.sosmed.repository.PostRepository;
 import com.project.sosmed.repository.UserRepository;
 import com.project.sosmed.service.CommentService;
+import com.project.sosmed.service.FileService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +36,10 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
+    private final FileService fileService;
 
     @Override
-    public CreateCommentResponse createComment(CreateCommentRequest request) {
+    public CreateCommentResponse createComment(CreateCommentRequest request, List<MultipartFile> media) {
         String content = request.getContent();
         if (content == null || content.isEmpty()) {
             throw new BadRequestException("The content of the comment must not be null or empty");
@@ -70,6 +70,16 @@ public class CommentServiceImpl implements CommentService {
         }
 
         Comment createdComment = commentRepository.save(createComment);
+
+        if (media != null && !media.isEmpty()) {
+            List<FileMetadata> filesToSave = media.stream().map(f -> {
+                FileMetadata fileMetadata = fileService.uploadFile(f);
+                fileMetadata.setComment(createdComment);
+                return fileMetadata;
+            }).toList();
+
+            fileService.saveAll(filesToSave);
+        }
 
         Comment currParentComment = createdComment.getParentComment();
 
